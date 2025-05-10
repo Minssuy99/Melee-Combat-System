@@ -1,0 +1,20 @@
+/.idea
+/.vs
+/Library
+/Logs
+/obj
+/Packages
+/ProjectSettings
+/UserSettings
+/.vsconfig
+/Assembly-CSharp-Editor.csproj
+/Assembly-CSharp.csproj
+/Combat System Course.sln
+/Combat System Course.sln.DotSettings.user
+*.meta
+*.asset
+
+/Assets/Materials
+/Assets/Models
+/Assets/Scenes
+/Assets/Settings
