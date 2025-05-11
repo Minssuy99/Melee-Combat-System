@@ -11,8 +11,6 @@
 /Assembly-CSharp.csproj
 /Combat System Course.sln
 /Combat System Course.sln.DotSettings.user
-/Game
-/Animation
 *.meta
 *.asset
 
@@ -20,3 +18,5 @@
 /Assets/Models
 /Assets/Scenes
 /Assets/Settings
+/Assets/Game
+/Assets/Animation
