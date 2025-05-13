@@ -24,16 +24,24 @@ public class PlayerController : MonoBehaviour
     CameraController cameraController;
     Animator animator;
     CharacterController characterController;
+    MeleeFighter meleeFighter;
 
     private void Awake()
     {
         cameraController = Camera.main.GetComponent<CameraController>();
         animator = GetComponent<Animator>();
         characterController = GetComponent<CharacterController>();
+        meleeFighter = GetComponent<MeleeFighter>();
     }
 
     void Update()
     {
+        if (meleeFighter.InAction)
+        {
+            animator.SetFloat("moveAmount", 0f);
+            return;
+        }
+        
         float h = Input.GetAxis("Horizontal");
         float v = Input.GetAxis("Vertical");
 
