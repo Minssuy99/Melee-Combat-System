@@ -14,10 +14,7 @@
 *.meta
 *.asset
 
-/Assets/Materials
-/Assets/Models
-/Assets/Scenes
-/Assets/Settings
-/Assets/Game
-/Assets/Animation
+/Assets/*
+!/Assets/Scripts/
+
 /Temp
