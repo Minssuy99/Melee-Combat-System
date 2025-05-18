@@ -13,6 +13,7 @@ public enum AttackState
 
 public class MeleeFighter : MonoBehaviour
 {
+    [SerializeField] private List<AttackData> attacks;
     [SerializeField] private GameObject sword;
     
     BoxCollider swordCollider;
@@ -34,6 +35,8 @@ public class MeleeFighter : MonoBehaviour
     }
 
     AttackState attackState;
+    bool doCombo;
+    int comboCount = 0;
 
     public bool InAction { get; private set; } = false;
     
@@ -43,17 +46,18 @@ public class MeleeFighter : MonoBehaviour
         {
             StartCoroutine(Attack());
         }
+        else if (attackState == AttackState.IMPACT || attackState == AttackState.COOLDOWN)
+        {
+            doCombo = true;
+        }
     }
 
     IEnumerator Attack()
     {
         InAction = true;
         attackState = AttackState.WINDUP;
-
-        float impactStartTime = 0.33f;
-        float impactEndTime = 0.55f;
         
-        animator.CrossFade("Slash", 0.2f);
+        animator.CrossFade(attacks[comboCount].AnimName, 0.2f);
         yield return null;
 
         var animState = animator.GetNextAnimatorStateInfo(1);
@@ -67,7 +71,7 @@ public class MeleeFighter : MonoBehaviour
 
             if (attackState == AttackState.WINDUP)
             {
-                if (nomalizedTime >=impactStartTime)
+                if (nomalizedTime >= attacks[comboCount].ImpactStartTime)
                 {
                     attackState = AttackState.IMPACT;
                     swordCollider.enabled = true;
@@ -75,7 +79,7 @@ public class MeleeFighter : MonoBehaviour
             }
             else if (attackState == AttackState.IMPACT)
             {
-                if (nomalizedTime >= impactEndTime)
+                if (nomalizedTime >= attacks[comboCount].ImpactEndTime)
                 {
                     attackState = AttackState.COOLDOWN;
                     swordCollider.enabled = false;
@@ -83,14 +87,21 @@ public class MeleeFighter : MonoBehaviour
             }
             else if (attackState == AttackState.COOLDOWN)
             {
-                // TODO : Handle combos
+                if (doCombo)
+                {
+                    doCombo = false;
+                    comboCount = (comboCount + 1) % attacks.Count;
+
+                    StartCoroutine(Attack());
+                    yield break;
+                }
             }
             
             yield return null;
         }
 
         attackState = AttackState.IDLE;
-        
+        comboCount = 0;
         InAction = false;
     }
 
@@ -110,7 +121,7 @@ public class MeleeFighter : MonoBehaviour
 
         var animState = animator.GetNextAnimatorStateInfo(1);
         
-        yield return new WaitForSeconds(animState.length);
+        yield return new WaitForSeconds(animState.length * 0.8f);
         
         InAction = false;
     }
