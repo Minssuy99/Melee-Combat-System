@@ -17,6 +17,7 @@ public class MeleeFighter : MonoBehaviour
     [SerializeField] private GameObject sword;
     
     BoxCollider swordCollider;
+    SphereCollider leftHandCollider, rightHandCollider, leftFootCollider, rightFootCollider;
     
     private Animator animator;
 
@@ -30,7 +31,12 @@ public class MeleeFighter : MonoBehaviour
         if (sword != null)
         {
             swordCollider = sword.GetComponent<BoxCollider>();
-            swordCollider.enabled = false;
+            leftHandCollider = animator.GetBoneTransform(HumanBodyBones.LeftHand).GetComponent<SphereCollider>();
+            rightHandCollider = animator.GetBoneTransform(HumanBodyBones.RightHand).GetComponent<SphereCollider>();
+            leftFootCollider = animator.GetBoneTransform(HumanBodyBones.LeftFoot).GetComponent<SphereCollider>();
+            rightFootCollider = animator.GetBoneTransform(HumanBodyBones.RightFoot).GetComponent<SphereCollider>();
+
+            DisableAllHitboxes();
         }
     }
 
@@ -74,7 +80,7 @@ public class MeleeFighter : MonoBehaviour
                 if (nomalizedTime >= attacks[comboCount].ImpactStartTime)
                 {
                     attackState = AttackState.IMPACT;
-                    swordCollider.enabled = true;
+                    EnableHitbox(attacks[comboCount]);
                 }
             }
             else if (attackState == AttackState.IMPACT)
@@ -82,7 +88,7 @@ public class MeleeFighter : MonoBehaviour
                 if (nomalizedTime >= attacks[comboCount].ImpactEndTime)
                 {
                     attackState = AttackState.COOLDOWN;
-                    swordCollider.enabled = false;
+                    DisableAllHitboxes();
                 }
             }
             else if (attackState == AttackState.COOLDOWN)
@@ -124,5 +130,38 @@ public class MeleeFighter : MonoBehaviour
         yield return new WaitForSeconds(animState.length * 0.8f);
         
         InAction = false;
+    }
+
+    void EnableHitbox(AttackData attack)
+    {
+        switch (attack.HitboxToUse)
+        {
+            case AttackHitbox.LEFTHAND:
+                leftHandCollider.enabled = true;
+                break;
+            case AttackHitbox.RIGHTHAND:
+                rightHandCollider.enabled = true;
+                break;
+            case AttackHitbox.LEFTFOOT:
+                leftFootCollider.enabled = true;
+                break;
+            case AttackHitbox.RIGHTFOOT:
+                rightFootCollider.enabled = true;
+                break;
+            case AttackHitbox.SWORD:
+                swordCollider.enabled = true;
+                break;
+            default:
+                break;
+        }
+    }
+
+    void DisableAllHitboxes()
+    {
+        swordCollider.enabled = false;
+        leftHandCollider.enabled = false;
+        rightHandCollider.enabled = false;
+        leftFootCollider.enabled = false;
+        rightFootCollider.enabled = false;
     }
 }
