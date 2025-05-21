@@ -2,20 +2,39 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.AI;
 
 public enum EnemyStates {  // 적의 상태들을 열거형으로 정의
     IDLE,  // 대기 상태
     CHASE,  // 추격 상태
 }
 
-public class EnemyController : MonoBehaviour {
+public class EnemyController : MonoBehaviour
+{
+    // 적이 볼 수 있는 시야각 (기본 180도)
+    [field : SerializeField]public float Fov { get; private set; } = 180f;
+    
+    // 현재 시야 범위 안에 들어온 모든 대상 목록
+    public List<MeleeFighter> TargetsInRange { get; set; } = new List<MeleeFighter>();
+    
+    // 실제로 쫓을 대상 1명을 저장
+    public MeleeFighter Target { get; set; }
+    
     // 상태 머신 프로퍼티 (EnemyController를 위한 상태 머신)
     public StateMachine<EnemyController> StateMachine { get; private set; }
     
     // 상태들을 저장하는 딕셔너리
     private Dictionary<EnemyStates, State<EnemyController>> stateDict;
     
-    private void Start() {
+    public NavMeshAgent NavAgent { get; private set; }
+    
+    public Animator Animator { get; private set; }
+    
+    private void Start()
+    {
+        NavAgent = GetComponent<NavMeshAgent>();
+        Animator = GetComponent<Animator>();
+        
         // 딕셔너리 초기화
         stateDict = new Dictionary<EnemyStates, State<EnemyController>>();
         
