@@ -16,5 +16,6 @@
 
 /Assets/*
 !/Assets/Scripts/
+!/Assets/Util/
 
 /Temp
