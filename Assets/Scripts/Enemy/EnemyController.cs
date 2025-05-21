@@ -5,7 +5,7 @@ using UnityEngine;
 
 public enum EnemyStates {  // 적의 상태들을 열거형으로 정의
     IDLE,  // 대기 상태
-    CHASE,  // 추격 상태cr
+    CHASE,  // 추격 상태
 }
 
 public class EnemyController : MonoBehaviour {
