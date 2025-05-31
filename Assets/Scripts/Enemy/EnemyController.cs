@@ -6,7 +6,7 @@ using UnityEngine.AI;
 
 public enum EnemyStates {  // 적의 상태들을 열거형으로 정의
     IDLE,  // 대기 상태
-    CHASE,  // 추격 상태
+    CombatMovement,  // 추격 상태
 }
 
 public class EnemyController : MonoBehaviour
@@ -40,7 +40,7 @@ public class EnemyController : MonoBehaviour
         
         // 컴포넌트로 추가된 상태 클래스들을 가져와 딕셔너리에 저장
         stateDict[EnemyStates.IDLE] = GetComponent<IdleState>();
-        stateDict[EnemyStates.CHASE] = GetComponent<ChaseState>();
+        stateDict[EnemyStates.CombatMovement] = GetComponent<CombatMovementState>();
         
         // 상태 머신 생성 및 초기 상태 설정
         StateMachine = new StateMachine<EnemyController>(this);
@@ -53,7 +53,10 @@ public class EnemyController : MonoBehaviour
     }
     
     // 매 프레임마다 현재 상태의 Execute 메서드 실행
-    private void Update() {
+    private void Update()
+    {
         StateMachine.Execute();
+        
+        Animator.SetFloat("moveAmount", NavAgent.velocity.magnitude / NavAgent.speed);
     }
 }

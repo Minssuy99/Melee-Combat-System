@@ -27,7 +27,7 @@ public class IdleState : State<EnemyController>
             if (angle <= enemy.Fov / 2)
             {
                 enemy.Target = target;
-                enemy.ChangeState(EnemyStates.CHASE); // 추적 상태로 전환
+                enemy.ChangeState(EnemyStates.CombatMovement); // 추적 상태로 전환
                 break;
             }
         }
