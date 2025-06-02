@@ -51,12 +51,24 @@ public class EnemyController : MonoBehaviour
     public void ChangeState(EnemyStates state) {
         StateMachine.ChangeState(stateDict[state]);
     }
+
+    private Vector3 prevPos;
     
     // 매 프레임마다 현재 상태의 Execute 메서드 실행
     private void Update()
     {
         StateMachine.Execute();
         
-        Animator.SetFloat("moveAmount", NavAgent.velocity.magnitude / NavAgent.speed);
+        Vector3 deltaPos = transform.position - prevPos;
+        Vector3 velocity = deltaPos / Time.deltaTime;
+        
+        float forwardSpeed = Vector3.Dot(velocity, transform.forward);
+        Animator.SetFloat("forwardSpeed", forwardSpeed / NavAgent.speed, 0.2f, Time.deltaTime);
+        
+        float angle = Vector3.SignedAngle(transform.forward, velocity, Vector3.up);
+        float strafeSpeed = Mathf.Sin(angle * Mathf.Deg2Rad);
+        Animator.SetFloat("strafeSpeed", strafeSpeed, 0.2f, Time.deltaTime);
+        
+        prevPos = transform.position;
     }
 }

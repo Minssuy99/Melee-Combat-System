@@ -74,7 +74,10 @@ public class CombatMovementState : State<EnemyController>
                 StartIdle();
                 return;
             }
-            transform.RotateAround(enemy.Target.transform.position, Vector3.up, circlingSpeed * circlingDir * Time.deltaTime);
+            Vector3 vecToTarget = enemy.transform.position - enemy.Target.transform.position;
+            Vector3 rotatedPos = Quaternion.Euler(0, circlingSpeed * circlingDir * Time.deltaTime, 0) * vecToTarget;
+            enemy.NavAgent.Move(rotatedPos - vecToTarget);
+            enemy.transform.rotation = Quaternion.LookRotation(-rotatedPos);
         }
 
         if (timer > 0)
@@ -89,25 +92,22 @@ public class CombatMovementState : State<EnemyController>
         timer = Random.Range(idleTimeRange.x, idleTimeRange.y);
         
         enemy.Animator.SetBool("combatMode", true);
-        enemy.Animator.SetBool("circling", false);
     }
     
     void StartChase()
     {
         state = AICombatStates.CHASE;
         enemy.Animator.SetBool("combatMode", false);
-        enemy.Animator.SetBool("circling", false);
     }
 
     void StartCircling()
     {
         state = AICombatStates.Circling;
+
+        enemy.NavAgent.ResetPath();
         timer = Random.Range(circlingTimeRange.x, circlingTimeRange.y);
 
         circlingDir = Random.Range(0, 2) == 0 ? 1 : -1;
-        
-        enemy.Animator.SetBool("circling", true);
-        enemy.Animator.SetFloat("circlingDir", circlingDir);
     }
     
     // 상태 종료 시 호출
