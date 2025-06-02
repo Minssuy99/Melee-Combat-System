@@ -7,18 +7,21 @@ using UnityEngine.AI;
 public enum EnemyStates {  // 적의 상태들을 열거형으로 정의
     IDLE,  // 대기 상태
     CombatMovement,  // 추격 상태
+    ATTACK, // 공격 상태
 }
 
 public class EnemyController : MonoBehaviour
 {
     // 적이 볼 수 있는 시야각 (기본 180도)
-    [field : SerializeField]public float Fov { get; private set; } = 180f;
+    [field : SerializeField] public float Fov { get; private set; } = 180f;
     
     // 현재 시야 범위 안에 들어온 모든 대상 목록
     public List<MeleeFighter> TargetsInRange { get; set; } = new List<MeleeFighter>();
     
     // 실제로 쫓을 대상 1명을 저장
     public MeleeFighter Target { get; set; }
+
+    public float CombatMovementTimer { get; set; } = 0f;
     
     // 상태 머신 프로퍼티 (EnemyController를 위한 상태 머신)
     public StateMachine<EnemyController> StateMachine { get; private set; }
@@ -30,10 +33,13 @@ public class EnemyController : MonoBehaviour
     
     public Animator Animator { get; private set; }
     
+    public MeleeFighter Fighter { get; private set; }
+    
     private void Start()
     {
         NavAgent = GetComponent<NavMeshAgent>();
         Animator = GetComponent<Animator>();
+        Fighter = GetComponent<MeleeFighter>();
         
         // 딕셔너리 초기화
         stateDict = new Dictionary<EnemyStates, State<EnemyController>>();
@@ -41,6 +47,7 @@ public class EnemyController : MonoBehaviour
         // 컴포넌트로 추가된 상태 클래스들을 가져와 딕셔너리에 저장
         stateDict[EnemyStates.IDLE] = GetComponent<IdleState>();
         stateDict[EnemyStates.CombatMovement] = GetComponent<CombatMovementState>();
+        stateDict[EnemyStates.ATTACK] = GetComponent<AttackState>();
         
         // 상태 머신 생성 및 초기 상태 설정
         StateMachine = new StateMachine<EnemyController>(this);
@@ -48,8 +55,14 @@ public class EnemyController : MonoBehaviour
     }
     
     // 상태 변경 메서드
-    public void ChangeState(EnemyStates state) {
+    public void ChangeState(EnemyStates state)
+    {
         StateMachine.ChangeState(stateDict[state]);
+    }
+
+    public bool IsInState(EnemyStates state)
+    {
+        return StateMachine.CurrentState == stateDict[state];
     }
 
     private Vector3 prevPos;

@@ -13,7 +13,10 @@ public class VisionSensor : MonoBehaviour
         var fighter = other.GetComponent<MeleeFighter>();
 
         if (fighter != null)
+        {
             enemy.TargetsInRange.Add(fighter); // 적 범위에 들어온 대상 추가
+            EnemyManager.i.AddEnemyInRange(enemy);  // 리스트에 적 추가
+        }
     }
 
     // 트리거 콜라이더에서 오브젝트가 나갔을 때 호출
@@ -22,6 +25,9 @@ public class VisionSensor : MonoBehaviour
         var fighter = other.GetComponent<MeleeFighter>();
 
         if (fighter != null)
+        {
             enemy.TargetsInRange.Remove(fighter); // 적 범위에서 벗어난 대상 제거
+            EnemyManager.i.RemoveEnemyInRange(enemy);  // 리스트에 적 제거
+        }
     }
 }

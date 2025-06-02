@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public enum AttackState
+public enum AttackStates
 {
     IDLE,
     WINDUP,
@@ -40,7 +40,7 @@ public class MeleeFighter : MonoBehaviour
         }
     }
 
-    AttackState attackState;
+    public AttackStates AttackState { get; private set; }
     bool doCombo;
     int comboCount = 0;
 
@@ -52,7 +52,7 @@ public class MeleeFighter : MonoBehaviour
         {
             StartCoroutine(Attack());
         }
-        else if (attackState == AttackState.IMPACT || attackState == AttackState.COOLDOWN)
+        else if (AttackState == AttackStates.IMPACT || AttackState == AttackStates.COOLDOWN)
         {
             doCombo = true;
         }
@@ -61,7 +61,7 @@ public class MeleeFighter : MonoBehaviour
     IEnumerator Attack()
     {
         InAction = true;
-        attackState = AttackState.WINDUP;
+        AttackState = AttackStates.WINDUP;
         
         animator.CrossFade(attacks[comboCount].AnimName, 0.2f);
         yield return null;
@@ -75,23 +75,23 @@ public class MeleeFighter : MonoBehaviour
             timer += Time.deltaTime;
             float nomalizedTime = timer / animState.length;
 
-            if (attackState == AttackState.WINDUP)
+            if (AttackState == AttackStates.WINDUP)
             {
                 if (nomalizedTime >= attacks[comboCount].ImpactStartTime)
                 {
-                    attackState = AttackState.IMPACT;
+                    AttackState = AttackStates.IMPACT;
                     EnableHitbox(attacks[comboCount]);
                 }
             }
-            else if (attackState == AttackState.IMPACT)
+            else if (AttackState == AttackStates.IMPACT)
             {
                 if (nomalizedTime >= attacks[comboCount].ImpactEndTime)
                 {
-                    attackState = AttackState.COOLDOWN;
+                    AttackState = AttackStates.COOLDOWN;
                     DisableAllHitboxes();
                 }
             }
-            else if (attackState == AttackState.COOLDOWN)
+            else if (AttackState == AttackStates.COOLDOWN)
             {
                 if (doCombo)
                 {
@@ -106,7 +106,7 @@ public class MeleeFighter : MonoBehaviour
             yield return null;
         }
 
-        attackState = AttackState.IDLE;
+        AttackState = AttackStates.IDLE;
         comboCount = 0;
         InAction = false;
     }
@@ -158,10 +158,19 @@ public class MeleeFighter : MonoBehaviour
 
     void DisableAllHitboxes()
     {
-        swordCollider.enabled = false;
-        leftHandCollider.enabled = false;
-        rightHandCollider.enabled = false;
-        leftFootCollider.enabled = false;
-        rightFootCollider.enabled = false;
+        if(swordCollider != null)
+            swordCollider.enabled = false;  
+        
+        if(leftHandCollider != null)
+            leftHandCollider.enabled = false;
+        
+        if(rightHandCollider != null)
+            rightHandCollider.enabled = false;
+        
+        if(leftFootCollider != null)
+            leftFootCollider.enabled = false;
+        
+        if(rightFootCollider != null)
+            rightFootCollider.enabled = false;
     }
 }

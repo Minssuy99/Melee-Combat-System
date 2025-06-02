@@ -32,6 +32,7 @@ public class CombatMovementState : State<EnemyController>
         
         // 추적 멈출 거리 설정
         enemy.NavAgent.stoppingDistance = distanceToStand;
+        enemy.CombatMovementTimer = 0f;
     }
     
     // 상태 유지 중 매 프레임 호출
@@ -84,6 +85,8 @@ public class CombatMovementState : State<EnemyController>
         {
             timer -= Time.deltaTime;
         }
+        
+        enemy.CombatMovementTimer += Time.deltaTime;
     }
 
     void StartIdle()
@@ -113,6 +116,6 @@ public class CombatMovementState : State<EnemyController>
     // 상태 종료 시 호출
     public override void Exit()
     {
-
+        enemy.CombatMovementTimer = 0f;
     }
 }
