@@ -4,7 +4,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
 
-public enum EnemyStates {  // 적의 상태들을 열거형으로 정의
+public enum EnemyStates // 적의 상태들을 열거형으로 정의
+{ 
     IDLE,  // 대기 상태
     CombatMovement,  // 추격 상태
     ATTACK, // 공격 상태

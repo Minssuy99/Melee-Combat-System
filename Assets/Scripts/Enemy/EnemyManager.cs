@@ -13,7 +13,7 @@ public class EnemyManager : MonoBehaviour
         i = this;
     }
 
-    private List<EnemyController> enemiesInRange = new List<EnemyController>();
+    public List<EnemyController> enemiesInRange = new List<EnemyController>();
     private float notAttackingTimer = 2;
 
     public void AddEnemyInRange(EnemyController enemy)
