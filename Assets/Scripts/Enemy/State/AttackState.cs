@@ -40,5 +40,11 @@ public class AttackState : State<EnemyController>
         enemy.Animator.applyRootMotion = false;
         isAttacking = false;
         
+        enemy.ChangeState(EnemyStates.RetreatAfterAttack);
+    }
+
+    public override void Exit()
+    {
+        enemy.NavAgent.ResetPath();
     }
 }

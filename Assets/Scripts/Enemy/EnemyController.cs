@@ -9,6 +9,7 @@ public enum EnemyStates // 적의 상태들을 열거형으로 정의
     IDLE,  // 대기 상태
     CombatMovement,  // 추격 상태
     ATTACK, // 공격 상태
+    RetreatAfterAttack,
 }
 
 public class EnemyController : MonoBehaviour
@@ -49,6 +50,7 @@ public class EnemyController : MonoBehaviour
         stateDict[EnemyStates.IDLE] = GetComponent<IdleState>();
         stateDict[EnemyStates.CombatMovement] = GetComponent<CombatMovementState>();
         stateDict[EnemyStates.ATTACK] = GetComponent<AttackState>();
+        stateDict[EnemyStates.RetreatAfterAttack] = GetComponent<RetreatAfterAttackState>();
         
         // 상태 머신 생성 및 초기 상태 설정
         StateMachine = new StateMachine<EnemyController>(this);
@@ -73,7 +75,8 @@ public class EnemyController : MonoBehaviour
     {
         StateMachine.Execute();
         
-        Vector3 deltaPos = transform.position - prevPos;
+        // 기존코드 : Vector3 deltaPos = transform.position - prevPos;
+        Vector3 deltaPos = Animator.applyRootMotion? Vector3.zero : transform.position - prevPos;
         Vector3 velocity = deltaPos / Time.deltaTime;
         
         float forwardSpeed = Vector3.Dot(velocity, transform.forward);
