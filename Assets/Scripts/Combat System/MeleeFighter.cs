@@ -173,4 +173,6 @@ public class MeleeFighter : MonoBehaviour
         if(rightFootCollider != null)
             rightFootCollider.enabled = false;
     }
+    
+    public List<AttackData> Attacks => attacks;
 }
