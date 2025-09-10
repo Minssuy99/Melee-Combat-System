@@ -5,7 +5,12 @@ using UnityEngine;
 
 public class VisionSensor : MonoBehaviour
 {
-    [SerializeField] private EnemyController enemy;
+    [SerializeField] EnemyController enemy;
+
+    private void Awake()
+    {
+        enemy.VisionSensor = this;
+    }
 
     // 트리거 콜라이더에 어떤 오브젝트가 들어왔을 때 호출
     private void OnTriggerEnter(Collider other)

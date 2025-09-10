@@ -38,6 +38,7 @@ public class PlayerController : MonoBehaviour
     {
         if (meleeFighter.InAction)
         {
+            targetRotation = transform.rotation;
             animator.SetFloat("forwardSpeed", 0f);
             return;
         }

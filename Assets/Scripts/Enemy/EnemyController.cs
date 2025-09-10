@@ -10,6 +10,7 @@ public enum EnemyStates // 적의 상태들을 열거형으로 정의
     CombatMovement,  // 추격 상태
     ATTACK, // 공격 상태
     RetreatAfterAttack,
+    Dead,
 }
 
 public class EnemyController : MonoBehaviour
@@ -32,14 +33,19 @@ public class EnemyController : MonoBehaviour
     private Dictionary<EnemyStates, State<EnemyController>> stateDict;
     
     public NavMeshAgent NavAgent { get; private set; }
+
+    public CharacterController CharacterController { get; private set; }
     
     public Animator Animator { get; private set; }
     
     public MeleeFighter Fighter { get; private set; }
-    
+
+    public VisionSensor VisionSensor { get; set; }
+
     private void Start()
     {
         NavAgent = GetComponent<NavMeshAgent>();
+        CharacterController = GetComponent<CharacterController>();
         Animator = GetComponent<Animator>();
         Fighter = GetComponent<MeleeFighter>();
         
@@ -51,7 +57,8 @@ public class EnemyController : MonoBehaviour
         stateDict[EnemyStates.CombatMovement] = GetComponent<CombatMovementState>();
         stateDict[EnemyStates.ATTACK] = GetComponent<AttackState>();
         stateDict[EnemyStates.RetreatAfterAttack] = GetComponent<RetreatAfterAttackState>();
-        
+        stateDict[EnemyStates.Dead] = GetComponent<DeadState>();
+
         // 상태 머신 생성 및 초기 상태 설정
         StateMachine = new StateMachine<EnemyController>(this);
         StateMachine.ChangeState(stateDict[EnemyStates.IDLE]);

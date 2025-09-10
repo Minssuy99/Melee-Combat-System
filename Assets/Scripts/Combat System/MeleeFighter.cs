@@ -45,6 +45,7 @@ public class MeleeFighter : MonoBehaviour
     int comboCount = 0;
 
     public bool InAction { get; private set; } = false;
+    public bool InCounter { get; set; } = false;
     
     public void TryToAttack()
     {
@@ -77,6 +78,8 @@ public class MeleeFighter : MonoBehaviour
 
             if (AttackState == AttackStates.WINDUP)
             {
+                if (InCounter) break;
+
                 if (nomalizedTime >= attacks[comboCount].ImpactStartTime)
                 {
                     AttackState = AttackStates.IMPACT;
@@ -132,6 +135,43 @@ public class MeleeFighter : MonoBehaviour
         InAction = false;
     }
 
+    public IEnumerator PerformCounterAttack(EnemyController opponent)
+    {
+        InAction = true;
+
+        InCounter = true;
+        opponent.Fighter.InCounter = true;
+        opponent.ChangeState(EnemyStates.Dead);
+
+        var disVect = opponent.transform.position - transform.position;
+        disVect.y = 0;
+        transform.rotation = Quaternion.LookRotation(disVect);
+        opponent.transform.rotation = Quaternion.LookRotation(-disVect);
+
+        var targetPos = opponent.transform.position - disVect.normalized * 1f;
+
+        animator.CrossFade("CounterAttack", 0.2f);
+        opponent.Animator.CrossFade("CounterAttackVictim", 0.2f);
+        yield return null;
+
+        var animState = animator.GetNextAnimatorStateInfo(1);
+
+        float timer = 0f;
+        while (timer <= animState.length)
+        {
+            transform.position = Vector3.MoveTowards(transform.position, targetPos, 5 * Time.deltaTime);
+
+            yield return null;
+
+            timer += Time.deltaTime;
+        }
+
+        InCounter = false;
+        opponent.Fighter.InCounter = false;
+
+        InAction = false;
+    }
+
     void EnableHitbox(AttackData attack)
     {
         switch (attack.HitboxToUse)
@@ -175,4 +215,6 @@ public class MeleeFighter : MonoBehaviour
     }
     
     public List<AttackData> Attacks => attacks;
+
+    public bool IsCounterable => AttackState == AttackStates.WINDUP && comboCount == 0;
 }

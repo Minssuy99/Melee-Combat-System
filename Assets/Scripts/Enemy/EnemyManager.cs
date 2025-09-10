@@ -50,4 +50,9 @@ public class EnemyManager : MonoBehaviour
     {
         return enemiesInRange.OrderByDescending(e => e.CombatMovementTimer).FirstOrDefault();
     }
+
+    public EnemyController GetAttackinEnemy()
+    {
+        return enemiesInRange.FirstOrDefault(e => e.IsInState(EnemyStates.ATTACK));
+    }
 }
